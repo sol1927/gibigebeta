@@ -1,7 +1,6 @@
-import React from 'react'
+// app/page.jsx
+import { redirect } from "next/navigation";
 
-export default function page() {
-  return (
-    <div className='text-center text-green-500 text-5xl flex '>page</div>
-  )
+export default function Home() {
+  redirect("/universities"); // automatically goes to /login
 }

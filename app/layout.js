@@ -19,8 +19,17 @@ export const metadata = {
 export default function RootLayout({ children }) {
   return (
     <html lang="en">
-      <body className={`${geistSans.variable} ${geistMono.variable}`}>
-        {children}
+      <body
+        className={`${geistSans.variable} ${geistMono.variable} min-h-screen bg-cover bg-center bg-no-repeat relative`}
+        style={{
+          backgroundImage: "url('/background.jpg')",
+        }}
+      >
+        {/* Dark transparent overlay */}
+        <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
+
+        {/* Your page content */}
+        <main className="relative z-10">{children}</main>
       </body>
     </html>
   );
