@@ -1,10 +1,12 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function TwoFAVerifyBox({ email, onSuccess, onClose }) {
-  const [code, setCode] = useState(""); // start empty
-  const [status, setStatus] = useState("");
-  const [statusType, setStatusType] = useState(""); // "success" or "error"
+  const [code, setCode] = useState(""); 
+  const [error, setError] = useState(""); 
+  const [isShaking, setIsShaking] = useState(false);
+  const [triggerSuccessBoxAnim, setTriggerSuccessBoxAnim] = useState(false);
+  const boxRef = useRef(null);
 
   const maskEmail = (email) => {
     const [user, domain] = email.split("@");
@@ -15,25 +17,48 @@ export default function TwoFAVerifyBox({ email, onSuccess, onClose }) {
 
   const handleVerify = () => {
     if (code === "123456") {
-      setStatusType("success");
-      setStatus("🎉 2FA verified successfully!");
-      setTimeout(() => onSuccess(), 2000);
+      setTriggerSuccessBoxAnim(true);
+      setTimeout(() => {
+        setTriggerSuccessBoxAnim(false);
+        onSuccess();
+      }, 1200);
     } else {
-      setStatusType("error");
-      setStatus("❌ Invalid code. Try again.");
+      setError("❌ Invalid code. Try again.");
+      setIsShaking(true);
+      setTimeout(() => {
+        setIsShaking(false);
+      }, 500);
     }
   };
 
-  // Hide status after 3 seconds
+  // Shake on outside click
   useEffect(() => {
-    if (status) {
-      const timer = setTimeout(() => setStatus(""), 3000);
+    const handleClickOutside = (event) => {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setError("⚠️ Clicked outside!");
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
+  // Hide error automatically after 2.5s
+  useEffect(() => {
+    if (error) {
+      const timer = setTimeout(() => setError(""), 2500);
       return () => clearTimeout(timer);
     }
-  }, [status]);
+  }, [error]);
 
   return (
-    <div className="bg-white shadow-2xl p-6 rounded-lg w-80 relative">
+    <div
+      ref={boxRef}
+      className={`bg-white shadow-2xl p-6 rounded-lg w-80 relative transform transition-all
+        ${isShaking ? "shake" : ""}
+        ${triggerSuccessBoxAnim ? "successBoxAnim" : ""}`}
+    >
       <h2 className="text-xl font-bold text-center mb-4 text-blue-700">
         Two-Factor Verification
       </h2>
@@ -46,43 +71,62 @@ export default function TwoFAVerifyBox({ email, onSuccess, onClose }) {
         value={code}
         onChange={(e) => setCode(e.target.value)}
       />
-      <button
-        onClick={handleVerify}
-        className="bg-blue-600 hover:bg-blue-700 text-white w-full py-2 rounded font-semibold transition transform hover:scale-105"
-      >
-        Verify
-      </button>
-      <button
-        onClick={onClose}
-        className="mt-3 text-gray-600 text-sm w-full text-center"
-      >
-        Cancel
-      </button>
 
-      {/* Status Message */}
-      {status && (
-        <div
-          className={`mt-4 text-center py-2 px-3 rounded font-semibold transition-all animate-fadeIn
-            ${statusType === "success" ? "bg-green-100 text-green-800" : ""}
-            ${statusType === "error" ? "bg-red-100 text-red-800" : ""}`}
-        >
-          {status}
+      {/* Error message above buttons */}
+      {error && (
+        <div className="text-center text-red-600 font-semibold mb-2 animate-fadeOut">
+          {error}
         </div>
       )}
 
+      <div className="flex flex-col gap-2">
+        <button
+          onClick={handleVerify}
+          className="bg-blue-600 hover:cursor-pointer hover:bg-blue-700 text-white w-full py-2 rounded font-semibold transition transform hover:scale-105"
+        >
+          Verify
+        </button>
+        <button
+          onClick={onClose}
+          className="text-gray-600 hover:cursor-pointer text-sm w-full text-center py-2 rounded hover:bg-gray-200 transition"
+        >
+          Cancel
+        </button>
+      </div>
+
       <style jsx>{`
-        @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: translateY(-5px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
+        /* Shake animation */
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          15% { transform: translateX(-5px); }
+          30% { transform: translateX(5px); }
+          45% { transform: translateX(-5px); }
+          60% { transform: translateX(5px); }
+          75% { transform: translateX(-3px); }
+          90% { transform: translateX(3px); }
+          100% { transform: translateX(0); }
         }
-        .animate-fadeIn {
-          animation: fadeIn 0.3s ease-out forwards;
+        .shake { animation: shake 0.5s ease-in-out; }
+
+        /* Success box animation: pop + glow */
+        @keyframes successBoxAnim {
+          0% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+          25% { transform: scale(1.05); box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
+          50% { transform: scale(1.1); box-shadow: 0 0 20px rgba(0, 255, 0, 0.8); }
+          75% { transform: scale(1.05); box-shadow: 0 0 15px rgba(0, 255, 0, 0.6); }
+          100% { transform: scale(1); box-shadow: 0 0 0 rgba(0,0,0,0); }
+        }
+        .successBoxAnim {
+          animation: successBoxAnim 1.2s ease-in-out forwards;
+        }
+
+        /* Error fade out */
+        @keyframes fadeOut {
+          0% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-10px); }
+        }
+        .animate-fadeOut {
+          animation: fadeOut 2.5s forwards;
         }
       `}</style>
     </div>

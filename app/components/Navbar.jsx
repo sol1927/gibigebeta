@@ -20,7 +20,7 @@ export default function Navbar({ userType }) {
     <nav className="w-full bg-gray-800 text-white px-6 py-4 flex justify-between items-center fixed top-0 left-0 z-50">
       {/* Logo */}
       <div className="flex items-center">
-        <Image src="/logo2.png" alt="Logo" width={40} height={40} />
+        <Image src="/gibigebeta-logo.png" alt="Logo" width={40} height={40} />
         <span className="ml-2 text-xl font-bold hidden md:inline">MyApp</span>
       </div>
 

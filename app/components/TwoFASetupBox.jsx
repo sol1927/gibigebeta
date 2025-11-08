@@ -1,31 +1,39 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function ChangeEmailBox({
   currentEmail = "admin@gmail.com",
   onClose,
   onUpdate,
 }) {
-  const [current, setCurrent] = useState(""); // <-- empty string now
+  const [current, setCurrent] = useState("");
   const [newEmail, setNewEmail] = useState("");
   const [code, setCode] = useState("");
   const [status, setStatus] = useState("");
   const [resendTimer, setResendTimer] = useState(0);
   const [canResend, setCanResend] = useState(true);
   const [codeSent, setCodeSent] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+  const boxRef = useRef(null);
 
   // Send verification code
   const handleSendCode = () => {
     if (current !== currentEmail) {
       setStatus("❌ Current email does not match!");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
     if (!newEmail.includes("@")) {
       setStatus("❌ Please enter a valid new email.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
     if (newEmail === currentEmail) {
       setStatus("❌ New email cannot be the same as current email.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
     setStatus(`📨 Verification code sent to ${newEmail}`);
@@ -44,10 +52,12 @@ export default function ChangeEmailBox({
 
     if (code === "123456") {
       setStatus("✅ Email updated successfully!");
-      onUpdate(newEmail); // Update email
+      onUpdate(newEmail);
       setTimeout(() => onClose(), 3000);
     } else {
       setStatus("❌ Invalid code. Try again.");
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
     }
   };
 
@@ -63,18 +73,35 @@ export default function ChangeEmailBox({
     return () => clearInterval(countdown);
   }, [resendTimer, canResend]);
 
-  // Hide status message after 3 seconds
+  // Hide status message automatically
   useEffect(() => {
     if (status) {
-      const timer = setTimeout(() => setStatus(""), 3000);
+      const timer = setTimeout(() => setStatus(""), 2500);
       return () => clearTimeout(timer);
     }
   }, [status]);
 
+  // Shake on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setStatus("⚠️ Clicked outside!");
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
+
   return (
     <div className="fixed inset-0 z-50 flex items-center justify-center p-4">
       <div className="fixed top-20 right-6 z-50 animate-fadeIn">
-        <div className="bg-white rounded-lg shadow-xl w-80 p-6 relative">
+        <div
+          ref={boxRef}
+          className={`bg-white rounded-lg shadow-xl w-80 p-6 relative transform transition-all
+            ${isShaking ? "shake" : ""}`}
+        >
           <button
             className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
             onClick={onClose}
@@ -82,6 +109,12 @@ export default function ChangeEmailBox({
             ✖
           </button>
           <h2 className="text-xl font-bold mb-4">Change Email</h2>
+
+          {status && (
+            <p className="text-center font-semibold mb-2 text-gray-700 animate-fadeOut">
+              {status}
+            </p>
+          )}
 
           <input
             type="email"
@@ -102,7 +135,7 @@ export default function ChangeEmailBox({
           {canResend ? (
             <button
               onClick={handleSendCode}
-              className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600 transition"
+              className="bg-blue-500 text-white px-4 py-2 rounded mb-4 hover:bg-blue-600 transition transform hover:scale-105"
             >
               Send Verification Code
             </button>
@@ -123,31 +156,45 @@ export default function ChangeEmailBox({
               />
               <button
                 onClick={handleVerify}
-                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+                className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition transform hover:scale-105"
               >
                 Confirm Email Change
               </button>
             </>
           )}
-
-          {status && <p className="mt-4 text-gray-700 text-sm">{status}</p>}
         </div>
       </div>
 
       {/* Animations */}
       <style jsx>{`
         @keyframes fadeIn {
-          0% {
-            opacity: 0;
-            transform: translateY(-10px);
-          }
-          100% {
-            opacity: 1;
-            transform: translateY(0);
-          }
+          0% { opacity: 0; transform: translateY(-10px); }
+          100% { opacity: 1; transform: translateY(0); }
         }
         .animate-fadeIn {
           animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .shake {
+          animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+          0% { transform: translateX(0); }
+          15% { transform: translateX(-5px); }
+          30% { transform: translateX(5px); }
+          45% { transform: translateX(-5px); }
+          60% { transform: translateX(5px); }
+          75% { transform: translateX(-3px); }
+          90% { transform: translateX(3px); }
+          100% { transform: translateX(0); }
+        }
+
+        @keyframes fadeOut {
+          0% { opacity: 1; transform: translateY(0); }
+          100% { opacity: 0; transform: translateY(-10px); }
+        }
+        .animate-fadeOut {
+          animation: fadeOut 2.5s forwards;
         }
       `}</style>
     </div>

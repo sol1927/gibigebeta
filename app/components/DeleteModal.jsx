@@ -1,6 +1,7 @@
+"use client";
 import { useState, useEffect, useRef } from "react";
 
-export default function DeleteModal({ visible, studentName, onCancel, onConfirm }) {
+export default function DeleteModal({ visible, itemName, onCancel, onConfirm }) {
   const modalRef = useRef();
   const [isShaking, setIsShaking] = useState(false);
 
@@ -21,13 +22,13 @@ export default function DeleteModal({ visible, studentName, onCancel, onConfirm 
   return (
     <>
       {/* Overlay */}
-      <div className="fixed inset-0 bg-black/80 flex items-center justify-center z-50">
+      <div className="fixed inset-0 bg-black/20 flex items-center justify-center z-50">
         {/* Modal */}
         <div
           ref={modalRef}
-          className={`bg-gradient-to-br from-red-900 to-gray-900  text-white p-6 rounded-2xl w-80 text-center shadow-2xl transform transition-all ${isShaking ? "shake" : ""}`}
+          className={`bg-gradient-to-br from-red-900 to-gray-900 text-white p-6 rounded-2xl w-80 text-center shadow-2xl transform transition-all ${isShaking ? "shake" : ""}`}
         >
-          <h2 className="text-2xl font-bold mb-4">Delete {studentName}?</h2>
+          <h2 className="text-2xl font-bold mb-4">Delete {itemName}?</h2>
           <p className="mb-6 text-gray-200">This action cannot be undone!</p>
           <div className="flex justify-around">
             <button

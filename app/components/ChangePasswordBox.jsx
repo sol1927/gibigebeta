@@ -1,5 +1,5 @@
 "use client";
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
 
 export default function ChangePasswordBox({
   onClose,
@@ -15,31 +15,40 @@ export default function ChangePasswordBox({
   const [showNew, setShowNew] = useState(false);
   const [showConfirm, setShowConfirm] = useState(false);
   const [dropdownVisible, setDropdownVisible] = useState(false);
+  const [isShaking, setIsShaking] = useState(false);
+
+  const boxRef = useRef(null);
 
   const handleUpdate = () => {
     if (!currentPassword || !newPassword || !confirmPassword) {
       setStatus("❌ All fields are required.");
       setIsSuccess(false);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
-    // Check current password matches real password
     if (currentPassword !== currentRealPassword) {
       setStatus("❌ Current password is incorrect.");
       setIsSuccess(false);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
-    // New password should not match current password
     if (newPassword === currentRealPassword) {
-      setStatus("❌ New password cannot be the same as the current password.");
+      setStatus("❌ New password must differ");
       setIsSuccess(false);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
     if (newPassword !== confirmPassword) {
       setStatus("❌ New passwords do not match.");
       setIsSuccess(false);
+      setIsShaking(true);
+      setTimeout(() => setIsShaking(false), 500);
       return;
     }
 
@@ -61,13 +70,26 @@ export default function ChangePasswordBox({
     }
   }, [isSuccess, onClose]);
 
-  // Hide error/success message automatically after 3 seconds
+  // Hide error/success message automatically
   useEffect(() => {
     if (status) {
-      const timer = setTimeout(() => setStatus(""), 3000);
+      const timer = setTimeout(() => setStatus(""), 2500);
       return () => clearTimeout(timer);
     }
   }, [status]);
+
+  // Shake on outside click
+  useEffect(() => {
+    const handleClickOutside = (event) => {
+      if (boxRef.current && !boxRef.current.contains(event.target)) {
+        setStatus("⚠️ Clicked outside!");
+        setIsShaking(true);
+        setTimeout(() => setIsShaking(false), 500);
+      }
+    };
+    document.addEventListener("mousedown", handleClickOutside);
+    return () => document.removeEventListener("mousedown", handleClickOutside);
+  }, []);
 
   const allGreen =
     /[A-Z]/.test(newPassword) &&
@@ -78,7 +100,12 @@ export default function ChangePasswordBox({
 
   return (
     <div className="fixed top-20 right-6 z-50 animate-fadeIn">
-      <div className="bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 relative z-50">
+      <div
+        ref={boxRef}
+        className={`bg-white rounded-lg shadow-xl w-full max-w-2xl p-6 relative z-50 transform transition-all ${
+          isShaking ? "shake" : ""
+        }`}
+      >
         <button
           className="absolute top-2 right-2 text-gray-500 hover:text-gray-700"
           onClick={onClose}
@@ -86,6 +113,17 @@ export default function ChangePasswordBox({
           ✖
         </button>
         <h2 className="text-xl font-bold mb-4">Change Password</h2>
+
+        {/* Status message */}
+        {status && (
+          <p
+            className={`text-center font-semibold mb-2 ${
+              isSuccess ? "text-green-600" : "text-red-600"
+            } animate-fadeOut`}
+          >
+            {status}
+          </p>
+        )}
 
         {/* Current Password */}
         <div className="relative mb-4">
@@ -187,19 +225,72 @@ export default function ChangePasswordBox({
 
         <button
           onClick={handleUpdate}
-          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition"
+          className="bg-green-500 text-white px-4 py-2 rounded hover:bg-green-600 transition transform hover:scale-105"
         >
           Update Password
         </button>
-
-        {status && (
-          <p
-            className={`mt-4 ${isSuccess ? "text-green-600" : "text-red-600"}`}
-          >
-            {status}
-          </p>
-        )}
       </div>
+
+      {/* Animations */}
+      <style jsx>{`
+        @keyframes fadeIn {
+          0% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          100% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+        }
+        .animate-fadeIn {
+          animation: fadeIn 0.5s ease-out forwards;
+        }
+
+        .shake {
+          animation: shake 0.5s ease-in-out;
+        }
+        @keyframes shake {
+          0% {
+            transform: translateX(0);
+          }
+          15% {
+            transform: translateX(-5px);
+          }
+          30% {
+            transform: translateX(5px);
+          }
+          45% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
+          75% {
+            transform: translateX(-3px);
+          }
+          90% {
+            transform: translateX(3px);
+          }
+          100% {
+            transform: translateX(0);
+          }
+        }
+
+        @keyframes fadeOut {
+          0% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+        }
+        .animate-fadeOut {
+          animation: fadeOut 2.5s forwards;
+        }
+      `}</style>
     </div>
   );
 }

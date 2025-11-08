@@ -32,9 +32,10 @@ export default function LoginBox({ university, campus, onClose }) {
 
   return (
     <div className="relative">
+      {/* Overlay */}
       <div
         ref={modalRef}
-        className={`bg-gray-900 p-6 rounded-2xl shadow-xl w-96 text-white transform transition-all ${
+        className={`bg-gray-900 p-6 rounded-2xl shadow-xl w-96 text-white transform transition-all relative z-50 ${
           isShaking ? "shake" : ""
         }`}
       >
