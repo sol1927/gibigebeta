@@ -1,110 +1,92 @@
 "use client";
 
-import React, { useState, useEffect, useRef } from "react"; // ✅ added hooks
+import React, { useEffect, useRef, useState } from "react";
 
-export default function LogoutConfirmModal({ visible, onConfirm, onCancel }) {
-  if (!visible) return null;
+export default function LogoutConfirmModal({ show, onConfirm, onCancel }) {
+  const boxRef = useRef(null);
+  const [shakeEffect, setShakeEffect] = useState(false);
 
-  const [isShaking, setIsShaking] = useState(false);
-  const modalRef = useRef(null);
-
-  // ✅ Shake when clicking outside the modal
+  // Close attempt triggers shake
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (modalRef.current && !modalRef.current.contains(event.target)) {
-        setIsShaking(true);
-        setTimeout(() => setIsShaking(false), 500);
+    const clickOutside = (e) => {
+      if (boxRef.current && !boxRef.current.contains(e.target)) {
+        setShakeEffect(true);
+        setTimeout(() => setShakeEffect(false), 400);
       }
     };
-
-    document.addEventListener("mousedown", handleClickOutside);
-    return () => document.removeEventListener("mousedown", handleClickOutside);
+    document.addEventListener("mousedown", clickOutside);
+    return () => document.removeEventListener("mousedown", clickOutside);
   }, []);
 
+  if (!show) return null;
+
   return (
-    <>
-      {/* Background overlay */}
-      <div className="fixed inset-0 bg-black/30 z-50"></div>
+    <div className="fixed inset-0 z-50 flex items-center justify-center">
+      {/* backdrop */}
+      <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-      {/* Modal box */}
-      <div className="fixed inset-0 flex items-center justify-center z-60 animate-fadeIn">
-        <div
-          ref={modalRef}
-          className={`bg-white rounded-2xl shadow-2xl p-6 w-80 text-center transform transition-all ${
-            isShaking ? "shake" : ""
-          }`}
-        >
-          <h2 className="text-xl font-semibold text-gray-800 mb-3">
-            Are you sure?
-          </h2>
-          <p className="text-gray-600 mb-6">
-            Do you really want to log out of your admin account?
-          </p>
+      {/* modal box */}
+      <div
+        ref={boxRef}
+        className={`relative bg-white w-96 p-8 rounded-xl shadow-lg z-50 text-center transition-transform duration-200 ${
+          shakeEffect ? "animate-wiggle" : "scale-100"
+        }`}
+      >
+        <h3 className="text-2xl font-semibold text-gray-800 mb-2">
+          Confirm Logout
+        </h3>
+        <p className="text-gray-600 mb-6">
+          Are you sure you want to log out of your admin account?
+        </p>
 
-          <div className="flex justify-center gap-4">
-            <button
-              onClick={onCancel}
-              className="px-4 py-2 rounded-lg bg-gray-200 hover:bg-gray-300 transition"
-            >
-              Cancel
-            </button>
-            <button
-              onClick={onConfirm}
-              className="px-4 py-2 rounded-lg bg-red-500 text-white hover:bg-red-600 transition"
-            >
-              Yes
-            </button>
-          </div>
+        <div className="flex justify-center gap-5">
+          <button
+            onClick={onCancel}
+            className="px-5 py-2 rounded-lg border border-gray-300 hover:bg-gray-100"
+          >
+            Cancel
+          </button>
+          <button
+            onClick={onConfirm}
+            className="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
+          >
+            Logout
+          </button>
         </div>
       </div>
 
+      {/* animations */}
       <style jsx>{`
-        @keyframes fadeIn {
+        @keyframes wiggle {
           0% {
-            opacity: 0;
-            transform: scale(0.95);
-          }
-          100% {
-            opacity: 1;
-            transform: scale(1);
-          }
-        }
-        .animate-fadeIn {
-          animation: fadeIn 0.25s ease-out forwards;
-        }
-
-        /* ✅ Shake animation */
-        .shake {
-          animation: shake 0.5s ease-in-out;
-        }
-
-        @keyframes shake {
-          0% {
-            transform: translateX(0) rotate(0deg) scale(1);
+            transform: translateX(0);
           }
           15% {
-            transform: translateX(-5px) rotate(-2deg) scale(1.02);
+            transform: translateX(-6px);
           }
           30% {
-            transform: translateX(5px) rotate(2deg) scale(1.02);
+            transform: translateX(6px);
           }
           45% {
-            transform: translateX(-5px) rotate(-2deg) scale(1.02);
+            transform: translateX(-6px);
           }
           60% {
-            transform: translateX(5px) rotate(2deg) scale(1.02);
+            transform: translateX(6px);
           }
           75% {
-            transform: translateX(-3px) rotate(-1deg) scale(1.01);
+            transform: translateX(-3px);
           }
           90% {
-            transform: translateX(3px) rotate(1deg) scale(1.01);
+            transform: translateX(3px);
           }
           100% {
-            transform: translateX(0) rotate(0deg) scale(1);
+            transform: translateX(0);
           }
         }
+        .animate-wiggle {
+          animation: wiggle 0.4s ease-in-out;
+        }
       `}</style>
-    </>
+    </div>
   );
 }

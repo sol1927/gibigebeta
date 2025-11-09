@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "../../../components/Navbar";
-import Footer from "../../../components/Footer";
+import Navbar from "../../../../components/Navbar";
+import Footer from "../../../../components/Footer";
 import Image from "next/image";
 
 export default function EditStudentPage() {
@@ -120,7 +120,11 @@ export default function EditStudentPage() {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -231,7 +235,11 @@ export default function EditStudentPage() {
             <label className="mb-1 font-semibold">Fingerprint</label>
             <button
               type="button"
-              onClick={() => alert("Fingerprint scanner will be connected here in the future!")}
+              onClick={() =>
+                alert(
+                  "Fingerprint scanner will be connected here in the future!"
+                )
+              }
               className="mt-1 px-4 py-2 bg-blue-600 hover:bg-blue-700 hover:cursor-pointer rounded-lg shadow-md transition"
             >
               Scan Fingerprint
@@ -243,7 +251,9 @@ export default function EditStudentPage() {
             <label className="mb-1 font-semibold">Eye / Iris</label>
             <button
               type="button"
-              onClick={() => alert("Eye/iris scanner will be connected here in the future!")}
+              onClick={() =>
+                alert("Eye/iris scanner will be connected here in the future!")
+              }
               className="mt-1 px-4 py-2 bg-green-600 hover:bg-green-700 hover:cursor-pointer rounded-lg shadow-md transition"
             >
               Scan Eye / Iris
@@ -255,7 +265,9 @@ export default function EditStudentPage() {
             <label className="mb-1 font-semibold">ID Card / QR</label>
             <button
               type="button"
-              onClick={() => alert("ID/QR scanner will be connected here in the future!")}
+              onClick={() =>
+                alert("ID/QR scanner will be connected here in the future!")
+              }
               className="mt-1 px-4 py-2 bg-purple-600 hover:bg-purple-700 hover:cursor-pointer rounded-lg shadow-md transition"
             >
               Scan ID / QR

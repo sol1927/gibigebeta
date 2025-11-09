@@ -3,8 +3,8 @@
 import React, { useState, useRef, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 
 export default function EditProfilePage() {
   const router = useRouter();
@@ -91,7 +91,7 @@ export default function EditProfilePage() {
     }
 
     alert("Profile saved! (Frontend only, no backend)");
-    router.push("/profile");
+    router.push("/adminDashboard/profile");
   };
 
   return (
@@ -100,7 +100,7 @@ export default function EditProfilePage() {
 
       <button
         type="button"
-        onClick={() => router.push("/profile")}
+        onClick={() => router.push("/adminDashboard/profile")}
         title="Back to Profile"
         className="fixed top-[90px] left-6 p-2 rounded-full hover:bg-blue-700 hover:cursor-pointer transition z-50"
       >
@@ -112,7 +112,11 @@ export default function EditProfilePage() {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -233,20 +237,55 @@ export default function EditProfilePage() {
             </button>
             {showDropdown && (
               <div className="absolute left-0 mt-1 w-max max-w-xs bg-gray-200 border rounded-md shadow-lg p-2 text-xs space-y-1 z-30">
-                <p className={/[A-Z]/.test(formData.newPassword) ? "text-green-600" : "text-red-500"}>
-                  {/[A-Z]/.test(formData.newPassword) ? "✅" : "❌"} At least one uppercase letter
+                <p
+                  className={
+                    /[A-Z]/.test(formData.newPassword)
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {/[A-Z]/.test(formData.newPassword) ? "✅" : "❌"} At least
+                  one uppercase letter
                 </p>
-                <p className={/[a-z]/.test(formData.newPassword) ? "text-green-600" : "text-red-500"}>
-                  {/[a-z]/.test(formData.newPassword) ? "✅" : "❌"} At least one lowercase letter
+                <p
+                  className={
+                    /[a-z]/.test(formData.newPassword)
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {/[a-z]/.test(formData.newPassword) ? "✅" : "❌"} At least
+                  one lowercase letter
                 </p>
-                <p className={/\d/.test(formData.newPassword) ? "text-green-600" : "text-red-500"}>
-                  {/\d/.test(formData.newPassword) ? "✅" : "❌"} At least one number
+                <p
+                  className={
+                    /\d/.test(formData.newPassword)
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {/\d/.test(formData.newPassword) ? "✅" : "❌"} At least one
+                  number
                 </p>
-                <p className={/[!@#$%^&*]/.test(formData.newPassword) ? "text-green-600" : "text-red-500"}>
-                  {/[!@#$%^&*]/.test(formData.newPassword) ? "✅" : "❌"} At least one special character
+                <p
+                  className={
+                    /[!@#$%^&*]/.test(formData.newPassword)
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {/[!@#$%^&*]/.test(formData.newPassword) ? "✅" : "❌"} At
+                  least one special character
                 </p>
-                <p className={formData.newPassword.length >= 8 ? "text-green-600" : "text-red-500"}>
-                  {formData.newPassword.length >= 8 ? "✅" : "❌"} At least 8 characters
+                <p
+                  className={
+                    formData.newPassword.length >= 8
+                      ? "text-green-600"
+                      : "text-red-500"
+                  }
+                >
+                  {formData.newPassword.length >= 8 ? "✅" : "❌"} At least 8
+                  characters
                 </p>
               </div>
             )}
@@ -284,7 +323,7 @@ export default function EditProfilePage() {
             </button>
             <button
               type="button"
-              onClick={() => router.push("/profile")}
+              onClick={() => router.push("/adminDashboard/profile")}
               className="bg-red-500 hover:bg-red-600 hover:cursor-pointer text-white font-semibold py-2 px-4 rounded-lg"
             >
               Cancel

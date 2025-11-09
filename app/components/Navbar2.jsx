@@ -1,7 +1,7 @@
 "use client";
 
 import React, { useState, useRef, useEffect } from "react";
-import { Settings } from "lucide-react"; // using a nice icon
+import { Settings } from "lucide-react";
 import LogoutConfirmModal from "./LogoutConfirmModal";
 
 export default function Navbar2({
@@ -11,20 +11,19 @@ export default function Navbar2({
   setMainAdminLoggedIn,
   setMainAdminMode,
   setShowMainAdminLogin,
-  setShow2FAModal, // ✅ must exist
-  setShowPasswordModal, // ✅ must exist
+  setShow2FAModal,
+  setShowPasswordModal,
 }) {
   const [showSettings, setShowSettings] = useState(false);
   const settingsRef = useRef(null);
   const [showLogoutConfirm, setShowLogoutConfirm] = useState(false);
 
-  const handleLogout = () => {
-    setShowLogoutConfirm(true); // open the confirm box instead of logging out directly
-  };
+  const handleLogout = () => setShowLogoutConfirm(true);
 
+  // Close settings when clicking outside
   useEffect(() => {
-    const handleClickOutside = (event) => {
-      if (settingsRef.current && !settingsRef.current.contains(event.target)) {
+    const handleClickOutside = (e) => {
+      if (settingsRef.current && !settingsRef.current.contains(e.target)) {
         setShowSettings(false);
       }
     };
@@ -33,7 +32,7 @@ export default function Navbar2({
   }, []);
 
   return (
-    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-500 via-green-500 to-gray-500 shadow-md flex justify-between items-center px-6 py-3">
+    <div className="fixed top-0 left-0 right-0 z-50 bg-gradient-to-r from-blue-500 via-green-500 to-gray-500 shadow-md flex flex-wrap justify-between items-center px-4 py-3">
       {/* Logo */}
       <div className="flex items-center gap-2">
         <img
@@ -47,24 +46,24 @@ export default function Navbar2({
       </div>
 
       {/* Search + Admin Buttons */}
-      <div className="flex items-center gap-4 relative">
+      <div className="flex flex-wrap items-center gap-2 sm:gap-4 mt-2 sm:mt-0">
         <input
           type="text"
           placeholder="Search universities..."
           value={searchQuery}
           onChange={(e) => setSearchQuery(e.target.value)}
-          className="border border-gray-300 rounded-lg px-4 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-sm"
+          className="border border-gray-300 rounded-lg px-3 py-2 focus:outline-none focus:ring-2 focus:ring-blue-300 shadow-sm w-full sm:w-auto"
         />
         <button
           onClick={() => setSearchQuery("")}
-          className="bg-blue-600 hover:bg-blue-700 hover:cursor-pointer text-white font-semibold px-4 py-2 rounded-lg shadow-md"
+          className="bg-blue-600 hover:bg-blue-700 text-white font-semibold px-3 py-2 rounded-lg shadow-md"
         >
           Clear
         </button>
 
         {mainAdminLoggedIn ? (
           <>
-            {/* Settings dropdown with icon */}
+            {/* Settings dropdown */}
             <div ref={settingsRef} className="relative">
               <button
                 onClick={() => setShowSettings(!showSettings)}
@@ -73,6 +72,7 @@ export default function Navbar2({
               >
                 <Settings className="w-5 h-5" />
               </button>
+
               {showSettings && (
                 <div className="absolute right-0 mt-2 w-44 bg-white rounded-xl shadow-xl flex flex-col overflow-hidden animate-fadeIn z-50">
                   <button
@@ -97,9 +97,10 @@ export default function Navbar2({
               )}
             </div>
 
+            {/* Logout Button */}
             <button
               onClick={handleLogout}
-              className="bg-red-500 hover:bg-red-600 text-white px-5 py-2 rounded-full font-semibold shadow-md ml-2"
+              className="bg-red-500 hover:bg-red-600 text-white px-3 py-2 rounded-full font-semibold shadow-md ml-2"
             >
               Logout
             </button>
@@ -107,13 +108,15 @@ export default function Navbar2({
         ) : (
           <button
             onClick={() => setShowMainAdminLogin(true)}
-            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 hover:cursor-pointer text-white px-5 py-2 rounded-full font-semibold shadow-md"
+            className="bg-gradient-to-r from-purple-600 to-blue-600 hover:from-purple-700 hover:to-blue-700 text-white px-3 py-2 rounded-full font-semibold shadow-md"
           >
             Main Admin Login
           </button>
         )}
+
+        {/* Logout Modal */}
         <LogoutConfirmModal
-          visible={showLogoutConfirm}
+          show={showLogoutConfirm}
           onCancel={() => setShowLogoutConfirm(false)}
           onConfirm={() => {
             setMainAdminLoggedIn(false);

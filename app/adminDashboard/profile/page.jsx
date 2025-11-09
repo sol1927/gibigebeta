@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "/app/components/Navbar";
+import Footer from "/app/components/Footer";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -57,7 +57,7 @@ export default function ProfilePage() {
         <p>Email: {user.email}</p>
 
         <button
-          onClick={() => router.push("/profile/edit")}
+          onClick={() => router.push("/adminDashboard/profile/edit")}
           className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white mt-10 font-semibold py-4 px-8 rounded-lg text-xl"
         >
           Edit Profile

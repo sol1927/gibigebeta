@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 import Image from "next/image";
 
 export default function CampusDetailsPage() {
@@ -58,7 +58,7 @@ export default function CampusDetailsPage() {
       {/* Back Button */}
       <button
         type="button"
-        onClick={() => router.push("/campuses")}
+        onClick={() => router.push("/adminDashboard/campuses")}
         title="Back to Campuses List"
         className="fixed top-[90px] left-6 p-2 rounded-full hover:bg-blue-700 transition z-50"
       >
@@ -104,7 +104,7 @@ export default function CampusDetailsPage() {
         </div>
         <button
           type="button"
-          onClick={() => router.push(`/campuses/edit/${campus.id}`)}
+          onClick={() => router.push(`/adminDashboard/campuses/edit/${campus.id}`)}
           className="mt-6 bg-green-500 hover:bg-green-600 py-3 px-8 rounded-lg font-semibold text-xl"
         >
           Edit Campus

@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "../../../components/Navbar";
-import Footer from "../../../components/Footer";
+import Navbar from "../../../../components/Navbar";
+import Footer from "../../../../components/Footer";
 import Image from "next/image";
 
 export default function EditCampusPage() {
@@ -43,7 +43,7 @@ export default function EditCampusPage() {
     // Automatically redirect after 2 seconds
     setTimeout(() => {
       setSuccessMessage(false);
-      router.push("/campuses");
+      router.push("/adminDashboard/campuses");
     }, 2000);
 
     // In real app, here you would call API to update DB
@@ -61,7 +61,7 @@ export default function EditCampusPage() {
 
       <button
         type="button"
-        onClick={() => router.push("/campuses")}
+        onClick={() => router.push("/adminDashboard/campuses")}
         title="Back to Campuses"
         className="fixed top-[90px] left-6 p-2 rounded-full hover:bg-blue-700 z-50"
       >
@@ -97,7 +97,7 @@ export default function EditCampusPage() {
 
           <div className="flex gap-4 mt-4">
             <button type="submit" className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-semibold">Save</button>
-            <button type="button" onClick={() => router.push("/campuses")} className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold">Cancel</button>
+            <button type="button" onClick={() => router.push("/adminDashboard/campuses")} className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold">Cancel</button>
           </div>
         </form>
       </div>

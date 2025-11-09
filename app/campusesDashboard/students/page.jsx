@@ -3,9 +3,9 @@
 import React, { useState, useEffect, useRef } from "react";
 import Image from "next/image";
 import { useRouter } from "next/navigation";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
-import DeleteModal from "../components/DeleteModal";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
+import DeleteModal from "../../components/DeleteModal";
 
 const StudentsListPage = () => {
   const router = useRouter();
@@ -117,7 +117,11 @@ const StudentsListPage = () => {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -161,7 +165,8 @@ const StudentsListPage = () => {
                   key={student.id}
                   className="border-b border-gray-700 hover:bg-white/10 transition cursor-pointer"
                   onClick={(e) => {
-                    if (e.target.closest("button") || e.target.closest("svg")) return;
+                    if (e.target.closest("button") || e.target.closest("svg"))
+                      return;
                     handleViewStudent(student.id);
                   }}
                 >
@@ -183,7 +188,9 @@ const StudentsListPage = () => {
                     <div ref={(el) => (dropdownRefs.current[student.id] = el)}>
                       <button
                         onClick={() =>
-                          setSelectedMenu(selectedMenu === student.id ? null : student.id)
+                          setSelectedMenu(
+                            selectedMenu === student.id ? null : student.id
+                          )
                         }
                         className="p-2 hover:bg-white/20 rounded-full transition"
                       >
@@ -222,7 +229,10 @@ const StudentsListPage = () => {
 
               {filteredStudents.length === 0 && (
                 <tr>
-                  <td colSpan="6" className="text-center py-6 text-gray-400 italic">
+                  <td
+                    colSpan="6"
+                    className="text-center py-6 text-gray-400 italic"
+                  >
                     No students found.
                   </td>
                 </tr>

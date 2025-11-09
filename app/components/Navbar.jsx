@@ -10,9 +10,7 @@ export default function Navbar({ userType }) {
   // Handle profile navigation based on userType
   const handleProfileClick = () => {
     if (userType === "admin") {
-      router.push("/profile"); // normal admin profile
-    } else if (userType === "campus") {
-      router.push("/campusesDashboard/profile"); // campus dashboard profile page
+      router.push("/adminDashboard/profile"); // normal admin profile
     }
   };
 
@@ -24,13 +22,15 @@ export default function Navbar({ userType }) {
         <span className="ml-2 text-xl font-bold hidden md:inline">MyApp</span>
       </div>
 
-      {/* Profile Button */}
-      <button
-        onClick={handleProfileClick}
-        className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-semibold transition"
-      >
-        Profile
-      </button>
+      {/* Profile Button (shown only for admin) */}
+      {userType === "admin" && (
+        <button
+          onClick={handleProfileClick}
+          className="bg-blue-500 hover:bg-blue-600 px-4 py-2 rounded-lg font-semibold transition"
+        >
+          Profile
+        </button>
+      )}
     </nav>
   );
 }

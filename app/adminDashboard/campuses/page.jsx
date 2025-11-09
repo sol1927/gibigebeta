@@ -1,10 +1,10 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../components/Navbar";
+import Footer from "../../components/Footer";
 import { useRouter } from "next/navigation";
-import DeleteModal from "../components/DeleteModal";
+import DeleteModal from "../../components/DeleteModal";
 import Image from "next/image";
 
 export default function CampusesPage({ userType }) {
@@ -68,20 +68,45 @@ export default function CampusesPage({ userType }) {
   }, []);
 
   const handleDelete = (id) => {
-    setSelectedMenu(null); // 👈 instantly close the dropdown
-    setDeleteCampusId(id); // 👈 then show delete confirmation box
+    setSelectedMenu(null); // instantly close the dropdown
+    setDeleteCampusId(id); // show delete confirmation box
   };
+
   const confirmDelete = () => {
     setCampuses(campuses.filter((c) => c.id !== deleteCampusId));
     setDeleteCampusId(null);
   };
-  const handleEdit = (id) => router.push(`/campuses/edit/${id}`);
-  const handleViewDetails = (id) => router.push(`/campuses/${id}`);
+
+  const handleEdit = (id) => router.push(`/adminDashboard/campuses/edit/${id}`);
+  const handleViewDetails = (id) => router.push(`/adminDashboard/campuses/${id}`);
   const handleAddCampus = () => router.push("/campuses/add");
 
   return (
     <div className="min-h-screen bg-black/50 text-white flex flex-col relative">
       <Navbar userType="campus" campusId={loggedInCampus?.id} />
+
+      {/* Back button to Dashboard */}
+      <button
+        type="button"
+        onClick={() => router.push("/adminDashboard")}
+        title="Back to Dashboard"
+        className="fixed top-[90px] left-6 p-2 rounded-full hover:bg-blue-700 transition z-50"
+      >
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
+        </svg>
+      </button>
 
       <div className="flex flex-col items-center py-28 px-6 w-full max-w-6xl mx-auto flex-grow">
         {userType === "campus" && loggedInCampus && (

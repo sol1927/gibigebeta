@@ -3,8 +3,8 @@
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
 import Image from "next/image";
-import Navbar from "../components/Navbar";
-import Footer from "../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 
 const Status = () => {
   const router = useRouter();

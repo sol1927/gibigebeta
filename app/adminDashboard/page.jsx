@@ -85,7 +85,7 @@ export default function AdminDashboard() {
           {showButtons && (
             <div className="flex flex-col sm:flex-row justify-center gap-20 mb-8 animate-sequential">
               <button
-                onClick={() => router.push("/campuses")}
+                onClick={() => router.push("/adminDashboard/campuses")}
                 className="bg-blue-500 hover:bg-blue-600 text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition"
               >
                 Campuses

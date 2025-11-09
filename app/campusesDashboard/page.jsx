@@ -22,7 +22,10 @@ export default function campusesDashboard() {
   useEffect(() => {
     if (showWelcomeScreen) {
       // Fade out welcome after 4s
-      const fadeOutTimer = setTimeout(() => setWelcomeFadeClass("fade-out"), 3000);
+      const fadeOutTimer = setTimeout(
+        () => setWelcomeFadeClass("fade-out"),
+        3000
+      );
 
       // Show dashboard after 6s
       const showDashboardTimer = setTimeout(() => {
@@ -61,11 +64,13 @@ export default function campusesDashboard() {
 
   return (
     <div className="bg-black/50 min-h-screen flex flex-col justify-between items-center text-white overflow-hidden relative">
-<Navbar userType="campus" />
+      <Navbar userType="campus" />
 
       {/* Welcome Screen */}
       {showWelcomeScreen && (
-        <div className={`fixed inset-0 z-30 flex items-center justify-center bg-black/50 ${welcomeFadeClass}`}>
+        <div
+          className={`fixed inset-0 z-30 flex items-center justify-center bg-black/50 ${welcomeFadeClass}`}
+        >
           <p className="text-4xl font-bold text-white opacity-0 animate-fadeIn">
             Welcome to Arbaminch University!
           </p>
@@ -77,7 +82,12 @@ export default function campusesDashboard() {
         <div className="flex flex-col items-center pt-44 px-8 w-full max-w-3xl grow">
           {showLogo && (
             <div className="w-40 h-40 rounded-full overflow-hidden border-4 border-gray-400 mb-4 relative animate-sequential">
-              <Image src="/logo.png" alt="Dashboard Logo" fill className="object-cover" />
+              <Image
+                src="/logo.png"
+                alt="Dashboard Logo"
+                fill
+                className="object-cover"
+              />
             </div>
           )}
 
@@ -112,7 +122,11 @@ export default function campusesDashboard() {
       )}
 
       {/* Smooth sliding footer */}
-      <div className={`fixed bottom-4 left-0 w-full transition-transform duration-300 ${showFooter ? "translate-y-0" : "translate-y-full"}`}>
+      <div
+        className={`fixed bottom-4 left-0 w-full transition-transform duration-300 ${
+          showFooter ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         <Footer />
       </div>
 
@@ -133,16 +147,30 @@ export default function campusesDashboard() {
           animation: fadeInSequential 0.6s ease forwards;
         }
         @keyframes fadeIn {
-          from { opacity: 0; }
-          to { opacity: 1; }
+          from {
+            opacity: 0;
+          }
+          to {
+            opacity: 1;
+          }
         }
         @keyframes fadeOut {
-          from { opacity: 1; }
-          to { opacity: 0; }
+          from {
+            opacity: 1;
+          }
+          to {
+            opacity: 0;
+          }
         }
         @keyframes fadeInSequential {
-          from { opacity: 0; transform: translateY(20px); }
-          to { opacity: 1; transform: translateY(0); }
+          from {
+            opacity: 0;
+            transform: translateY(20px);
+          }
+          to {
+            opacity: 1;
+            transform: translateY(0);
+          }
         }
       `}</style>
     </div>

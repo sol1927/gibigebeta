@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useParams, useRouter } from "next/navigation";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 import Image from "next/image";
 
 export default function StudentDetailsPage() {
@@ -81,7 +81,11 @@ export default function StudentDetailsPage() {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -95,22 +99,31 @@ export default function StudentDetailsPage() {
             className="object-cover"
           />
         </div>
-
         <p className="text-3xl font-bold">{student.name}</p>
-
         <div className="flex flex-col md:flex-row md:justify-center gap-12 text-lg">
           <div className="flex flex-col gap-2">
-            <p><strong>Department:</strong> {student.department}</p>
-            <p><strong>ID Number:</strong> {student.idNumber}</p>
-            <p><strong>Email:</strong> {student.email}</p>
+            <p>
+              <strong>Department:</strong> {student.department}
+            </p>
+            <p>
+              <strong>ID Number:</strong> {student.idNumber}
+            </p>
+            <p>
+              <strong>Email:</strong> {student.email}
+            </p>
           </div>
           <div className="flex flex-col gap-2">
-            <p><strong>Fingerprint:</strong> {student.fingerprint}</p>
-            <p><strong>Iris:</strong> {student.iris}</p>
-            <p><strong>ID Card:</strong> {student.idCard}</p>
+            <p>
+              <strong>Fingerprint:</strong> {student.fingerprint}
+            </p>
+            <p>
+              <strong>Iris:</strong> {student.iris}
+            </p>
+            <p>
+              <strong>ID Card:</strong> {student.idCard}
+            </p>
           </div>
         </div>
-
         <button
           type="button"
           onClick={() => router.push(`/students/edit/${student.id}`)}
@@ -118,7 +131,6 @@ export default function StudentDetailsPage() {
         >
           Edit Student
         </button>
-
         <div className="h-40" /> {/* Extra spacing for footer */}
       </div>
 

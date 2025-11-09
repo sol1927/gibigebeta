@@ -2,7 +2,11 @@
 import React, { useState, useEffect, useRef } from "react";
 import TwoFAVerifyBox from "./TwoFAVerifyBox";
 
-export default function AdminLoginBox({ onClose, onLoginSuccess, credentials }) {
+export default function AdminLoginBox({
+  onClose,
+  onLoginSuccess,
+  credentials,
+}) {
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
   const [rememberMe, setRememberMe] = useState(false);
@@ -86,25 +90,24 @@ export default function AdminLoginBox({ onClose, onLoginSuccess, credentials }) 
           />
 
           {/* Password field with perfectly centered show/hide */}
-<div className="relative mb-3">
-  <div className="flex items-center">
-    <input
-      className="border w-full p-2 rounded pr-16"
-      placeholder="Password"
-      type={showPassword ? "text" : "password"}
-      value={password}
-      onChange={(e) => setPassword(e.target.value)}
-    />
-    <button
-      type="button"
-      onClick={() => setShowPassword(!showPassword)}
-      className="absolute right-3 text-gray-600 hover:text-gray-900 font-semibold h-full flex items-center"
-    >
-      {showPassword ? "Hide" : "Show"}
-    </button>
-  </div>
-</div>
-
+          <div className="relative mb-3">
+            <div className="flex items-center">
+              <input
+                className="border w-full p-2 rounded pr-16"
+                placeholder="Password"
+                type={showPassword ? "text" : "password"}
+                value={password}
+                onChange={(e) => setPassword(e.target.value)}
+              />
+              <button
+                type="button"
+                onClick={() => setShowPassword(!showPassword)}
+                className="absolute right-3 text-gray-600 hover:text-gray-900 font-semibold h-full flex items-center"
+              >
+                {showPassword ? "Hide" : "Show"}
+              </button>
+            </div>
+          </div>
 
           <div className="flex items-center justify-between mb-4 text-sm">
             <label className="flex items-center gap-2">
@@ -151,19 +154,41 @@ export default function AdminLoginBox({ onClose, onLoginSuccess, credentials }) 
         }
 
         @keyframes shake {
-          0% { transform: translateX(0); }
-          15% { transform: translateX(-5px); }
-          30% { transform: translateX(5px); }
-          45% { transform: translateX(-5px); }
-          60% { transform: translateX(5px); }
-          75% { transform: translateX(-3px); }
-          90% { transform: translateX(3px); }
-          100% { transform: translateX(0); }
+          0% {
+            transform: translateX(0);
+          }
+          15% {
+            transform: translateX(-5px);
+          }
+          30% {
+            transform: translateX(5px);
+          }
+          45% {
+            transform: translateX(-5px);
+          }
+          60% {
+            transform: translateX(5px);
+          }
+          75% {
+            transform: translateX(-3px);
+          }
+          90% {
+            transform: translateX(3px);
+          }
+          100% {
+            transform: translateX(0);
+          }
         }
 
         @keyframes fadeOut {
-          0% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-10px); }
+          0% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
         }
         .animate-fadeOut {
           animation: fadeOut 2.5s forwards;
