@@ -5,10 +5,11 @@ import LoginBox from "./components/LoginBox";
 import SignupBox from "./components/SignupBox";
 import AdminLoginBox from "./components/AdminLoginBox";
 import TwoFASetupBox from "./components/TwoFASetupBox";
+import TwoFAVerifyBox from "./components/TwoFAVerifyBox";
 import ChangePasswordBox from "./components/ChangePasswordBox";
 import DeleteModal from "./components/DeleteModal";
 import Navbar2 from "./components/Navbar2";
-import PasswordPromptModal from "./components/PasswordPromptModal";
+import DeleteUniversityModal from "./components/DeleteUniversityModal";
 
 export default function UniversitySelectionPage() {
   const [universities, setUniversities] = useState([
@@ -75,8 +76,6 @@ export default function UniversitySelectionPage() {
   ]);
 
   const [searchQuery, setSearchQuery] = useState("");
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
-  const [deleteTarget, setDeleteTarget] = useState(null);
   const [openDropdown, setOpenDropdown] = useState(null);
   const [showLogin, setShowLogin] = useState(false);
   const [selectedCampus, setSelectedCampus] = useState(null);
@@ -91,9 +90,10 @@ export default function UniversitySelectionPage() {
   const [mainAdminPassword, setMainAdminPassword] = useState("g");
   const [mainAdminEmail, setMainAdminEmail] = useState("");
   const [mainAdminUsername, setMainAdminUsername] = useState("admin@gmail.com");
-  const [deletePasswordInput, setDeletePasswordInput] = useState("");
-  const [showPasswordPrompt, setShowPasswordPrompt] = useState(false);
-  const [deletePasswordError, setDeletePasswordError] = useState("");
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
+  const [universityToDelete, setUniversityToDelete] = useState(null);
+  const [showDelete2FAModal, setShowDelete2FAModal] = useState(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState(false);
 
   const handleUniversityClick = (id) => {
     const universityElement = document.getElementById(`uni-${id}`);
@@ -112,16 +112,6 @@ export default function UniversitySelectionPage() {
     setSelectedCampus({ universityName, campusName, isAdmin });
     setShowLogin(true);
     setOpenDropdown(null);
-  };
-
-  // const handleDeleteUniversity = (id, name) => {
-  //   setDeleteTarget({ id, name });
-  //   setShowDeleteModal(true);
-  // };
-
-  const confirmDelete = () => {
-    setUniversities(universities.filter((u) => u.id !== deleteTarget.id));
-    setShowDeleteModal(false);
   };
 
   useEffect(() => {
@@ -145,16 +135,6 @@ export default function UniversitySelectionPage() {
     }
   }, []);
 
-  useEffect(() => {
-    if (deletePasswordError) {
-      const timer = setTimeout(() => {
-        setDeletePasswordError(""); // clear error after 3 seconds
-      }, 3000);
-
-      return () => clearTimeout(timer); // cleanup if component unmounts or error changes
-    }
-  }, [deletePasswordError]);
-
   const sortedUniversities = [...universities].sort((a, b) =>
     a.name.localeCompare(b.name)
   );
@@ -163,26 +143,27 @@ export default function UniversitySelectionPage() {
   );
 
   return (
-    <div className="min-h-screen flex flex-col items-center justify-center bg-gradient-to-b from-gray-200 via-blue-100 to-gray-200 p-6 pt-24 sm:pt-24 relative">
-      <Navbar2
-        searchQuery={searchQuery}
-        setSearchQuery={setSearchQuery}
-        mainAdminLoggedIn={mainAdminLoggedIn}
-        setMainAdminLoggedIn={setMainAdminLoggedIn}
-        setMainAdminMode={setMainAdminMode}
-        setShowMainAdminLogin={setShowMainAdminLogin}
-        setShow2FAModal={setShow2FAModal} // ✅ add this
-        setShowPasswordModal={setShowPasswordModal} // ✅ add this
-      />
-
-      <h1 className="text-4xl font-extrabold mb-4 text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-900 animate-fadeIn">
-        Welcome to Gibigebeta
-      </h1>
-
-      <p className="text-center text-gray-700 mb-12 max-w-xl text-lg animate-fadeIn delay-200">
-        Gibigebeta is a modern student cafeteria system that helps universities
-        manage meal tracking efficiently across campuses.
-      </p>
+    <div className="min-h-screen flex flex-col items-center bg-gradient-to-b from-gray-200 via-blue-100 to-gray-200 p-6 relative">
+      <div className="flex flex-col items-center w-full space-y-6 mt-20 sm:mt-24">
+        {" "}
+        <Navbar2
+          searchQuery={searchQuery}
+          setSearchQuery={setSearchQuery}
+          mainAdminLoggedIn={mainAdminLoggedIn}
+          setMainAdminLoggedIn={setMainAdminLoggedIn}
+          setMainAdminMode={setMainAdminMode}
+          setShowMainAdminLogin={setShowMainAdminLogin}
+          setShow2FAModal={setShow2FAModal}
+          setShowPasswordModal={setShowPasswordModal}
+        />
+        <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-900 animate-fadeIn">
+          Welcome to Gibigebeta
+        </h1>
+        <p className="text-center text-gray-700 max-w-xl text-lg animate-fadeIn delay-200">
+          Gibigebeta is a modern student cafeteria system that helps
+          universities manage meal tracking efficiently across campuses.
+        </p>
+      </div>
 
       <div
         className="flex flex-wrap justify-center gap-8 mb-12"
@@ -207,10 +188,6 @@ export default function UniversitySelectionPage() {
                 <span className="text-lg font-semibold text-gray-800 hover:text-blue-600 transition-colors truncate max-w-36">
                   {uni.name}
                 </span>
-
-                <div className="absolute -top-10 w-max max-w-xs bg-white text-gray-900 text-sm font-medium px-3 py-1 rounded-lg shadow-lg opacity-0 group-hover:opacity-100 transition-opacity whitespace-normal text-center z-50 pointer-events-none">
-                  {uni.name}
-                </div>
               </div>
 
               {openDropdown === uni.id && (
@@ -242,17 +219,17 @@ export default function UniversitySelectionPage() {
                     ))}
                   </div>
 
+                  {/* Delete university button, only for main admin */}
                   {mainAdminMode && (
                     <button
                       onClick={() => {
-                        setDeletePasswordInput(""); // clear previous input
-                        setShowPasswordPrompt(true); // open password prompt
-                        setOpenDropdown(null);
-                        setDeleteTarget(uni); // store which university to delete
+                        setUniversityToDelete(uni); // set the university object
+                        setShowDeleteModal(true); // show the modal
+                        setOpenDropdown(null); // close dropdown
                       }}
-                      className="px-5 py-3 text-left hover:bg-red-50 text-red-600 border-t border-gray-200 flex items-center gap-2 transition"
+                      className="flex items-center gap-2 px-5 py-3 text-left font-semibold text-red-600 bg-red-50 hover:bg-red-100 transition transform hover:scale-105 mt-1"
                     >
-                      🗑 Delete University
+                      🗑️ Delete University
                     </button>
                   )}
                 </div>
@@ -334,23 +311,6 @@ export default function UniversitySelectionPage() {
         </>
       )}
 
-      <PasswordPromptModal
-        visible={showPasswordPrompt}
-        passwordValue={deletePasswordInput}
-        onPasswordChange={setDeletePasswordInput}
-        onCancel={() => setShowPasswordPrompt(false)}
-        onConfirm={() => {
-          if (deletePasswordInput === mainAdminPassword) {
-            setShowDeleteModal(true);
-            setShowPasswordPrompt(false);
-            setDeletePasswordError("");
-          } else {
-            setDeletePasswordError("Incorrect password!");
-          }
-        }}
-        errorMessage={deletePasswordError}
-      />
-
       {show2FAModal && (
         <>
           <div className="fixed inset-0 bg-black/20 z-50"></div>
@@ -376,12 +336,52 @@ export default function UniversitySelectionPage() {
           </div>
         </>
       )}
+      {showDelete2FAModal && (
+        <>
+          <div className="fixed inset-0 bg-black/20 z-50"></div>
+          <div className="fixed inset-0 z-60 flex items-center justify-center p-4 animate-fadeIn">
+            <TwoFAVerifyBox
+              email={mainAdminEmail}
+              onClose={() => setShowDelete2FAModal(false)}
+              onSuccess={() => {
+                setShowDelete2FAModal(false);
+                setOpenDeleteModal(true); // open DeleteModal now
+              }}
+            />
+          </div>
+        </>
+      )}
 
       <DeleteModal
-        visible={showDeleteModal}
-        itemName={deleteTarget?.name}
-        onCancel={() => setShowDeleteModal(false)}
-        onConfirm={confirmDelete}
+        visible={openDeleteModal}
+        itemName={universityToDelete?.name}
+        onCancel={() => {
+          setOpenDeleteModal(false);
+          setUniversityToDelete(null);
+        }}
+        onConfirm={() => {
+          // Actually delete the university
+          setUniversities((prev) =>
+            prev.filter((u) => u.id !== universityToDelete.id)
+          );
+          setOpenDeleteModal(false);
+          setUniversityToDelete(null);
+        }}
+      />
+
+      <DeleteUniversityModal
+        show={showDeleteModal}
+        adminPassword={mainAdminPassword} // your admin password state
+        itemName={universityToDelete?.name} // name of university
+        onDelete={() => {
+          // Instead of deleting directly, open 2FA modal
+          setShowDeleteModal(false); // close password modal
+          setShowDelete2FAModal(true); // open 2FA modal
+        }}
+        onCancel={() => {
+          setShowDeleteModal(false);
+          setUniversityToDelete(null);
+        }}
       />
 
       <style jsx>{`

@@ -1,10 +1,8 @@
 "use client";
 
 import { useState, useRef, useEffect } from "react";
-import { useRouter } from "next/navigation";
 
 export default function SignupBox({ onClose }) {
-  const router = useRouter();
   const [university, setUniversity] = useState("");
   const [email, setEmail] = useState("");
   const [password, setPassword] = useState("");
@@ -82,9 +80,8 @@ export default function SignupBox({ onClose }) {
         </button>
 
         <h2 className="text-2xl font-bold text-center mb-6 text-white">
-          Create your account
+          Add a new university
         </h2>
-
         <button
           onClick={() => console.log("Google signup clicked")}
           className="w-full flex items-center justify-center gap-2 py-2.5 border rounded-md hover:bg-gray-700 hover:cursor-pointer text-white transition"
@@ -261,19 +258,6 @@ export default function SignupBox({ onClose }) {
             {loading ? "Creating..." : "Create Account"}
           </button>
         </form>
-
-        <p className="text-center text-sm text-gray-300 mt-5">
-          Already have an account?{" "}
-          <button
-            onClick={() => {
-              onClose();
-              router.push("/login");
-            }}
-            className="text-blue-500 hover:underline"
-          >
-            Sign in
-          </button>
-        </p>
       </div>
 
       {/* Styles */}
