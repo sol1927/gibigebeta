@@ -5,6 +5,7 @@ import Image from "next/image";
 import { useRouter } from "next/navigation";
 import Navbar from "/app/components/Navbar";
 import Footer from "/app/components/Footer";
+import ActionConfirmationModal from "/app/components/ActionConfirmationModal";
 
 export default function ProfilePage() {
   const router = useRouter();
@@ -16,6 +17,7 @@ export default function ProfilePage() {
   });
 
   const [showFooter, setShowFooter] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => {
@@ -24,6 +26,16 @@ export default function ProfilePage() {
     window.addEventListener("scroll", handleScroll);
     return () => window.removeEventListener("scroll", handleScroll);
   }, []);
+
+  const handleEditProfile = () => {
+    setShowActionModal(true); // Show password modal
+  };
+
+  const handleConfirmAction = () => {
+    // Password correct -> navigate to profile edit page
+    router.push("/adminDashboard/profile/edit");
+    setShowActionModal(false);
+  };
 
   return (
     <div className="min-h-screen bg-black/50 text-white flex flex-col relative">
@@ -44,7 +56,11 @@ export default function ProfilePage() {
           stroke="currentColor"
           strokeWidth={2}
         >
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -57,7 +73,7 @@ export default function ProfilePage() {
         <p>Email: {user.email}</p>
 
         <button
-          onClick={() => router.push("/adminDashboard/profile/edit")}
+          onClick={handleEditProfile}
           className="bg-blue-500 hover:bg-blue-600 hover:cursor-pointer text-white mt-10 font-semibold py-4 px-8 rounded-lg text-xl"
         >
           Edit Profile
@@ -65,6 +81,15 @@ export default function ProfilePage() {
 
         <div className="h-[200px]" />
       </div>
+
+      <ActionConfirmationModal
+        show={showActionModal}
+        adminPassword="1234" // Replace with real admin password
+        itemName="Profile"
+        actionType="edit"
+        onConfirm={handleConfirmAction}
+        onCancel={() => setShowActionModal(false)}
+      />
 
       <div
         className={`fixed bottom-4 left-0 w-full transition-transform duration-300 ${

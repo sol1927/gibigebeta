@@ -1,5 +1,4 @@
 "use client";
-
 import React, { useEffect, useRef, useState } from "react";
 
 export default function DeleteUniversityModal({
@@ -13,6 +12,8 @@ export default function DeleteUniversityModal({
   const [shakeEffect, setShakeEffect] = useState(false);
   const [inputPassword, setInputPassword] = useState("");
   const [error, setError] = useState("");
+  // State to toggle password visibility
+  const [showPassword, setShowPassword] = useState(false);
 
   // Click outside triggers shake
   useEffect(() => {
@@ -35,9 +36,14 @@ export default function DeleteUniversityModal({
       setError("");
     } else {
       setError("Incorrect password");
-      // No shake effect here
-      setTimeout(() => setError(""), 2000); // error disappears after 3s
+      // error disappears after 2 seconds
+      setTimeout(() => setError(""), 2000);
     }
+  };
+
+  // Function to toggle password visibility state
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
   };
 
   return (
@@ -45,7 +51,7 @@ export default function DeleteUniversityModal({
       {/* backdrop */}
       <div className="absolute inset-0 bg-black/40 backdrop-blur-sm"></div>
 
-      {/* modal box */}
+      {/* modal */}
       <div
         ref={boxRef}
         className={`relative bg-white w-96 p-8 rounded-xl shadow-lg z-50 text-center transition-transform duration-200 ${
@@ -59,13 +65,28 @@ export default function DeleteUniversityModal({
           Enter your admin password to confirm deletion.
         </p>
 
-        <input
-          type="password"
-          value={inputPassword}
-          onChange={(e) => setInputPassword(e.target.value)}
-          placeholder="Admin Password"
-          className="w-full border border-gray-300 rounded-lg p-3 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
-        />
+        {/* Input container for password field and toggle button */}
+        <div className="relative">
+          <input
+            // Change type based on showPassword state
+            type={showPassword ? "text" : "password"}
+            value={inputPassword}
+            onChange={(e) => setInputPassword(e.target.value)}
+            placeholder="Admin Password"
+            // Adjusted padding to make room for the toggle button
+            className="w-full border border-gray-300 rounded-lg p-3 pr-10 mb-2 focus:outline-none focus:ring-2 focus:ring-blue-500"
+          />
+          {/* Toggle button */}
+          <button
+            type="button"
+            onClick={togglePasswordVisibility}
+            className="absolute right-0 top-0 mt-3 mr-3 text-gray-500 hover:text-gray-700"
+            aria-label={showPassword ? "Hide password" : "Show password"}
+          >
+            {/* Simple eye icon using text, replace with SVG/Icon library for better visuals */}
+            {showPassword ? "Hide" : "Show"}
+          </button>
+        </div>
 
         {error && <p className="text-red-600 mb-2 text-sm">{error}</p>}
 
@@ -80,6 +101,7 @@ export default function DeleteUniversityModal({
           >
             Cancel
           </button>
+
           <button
             onClick={handleDelete}
             className="px-5 py-2 rounded-lg bg-red-600 text-white hover:bg-red-700"
@@ -89,7 +111,7 @@ export default function DeleteUniversityModal({
         </div>
       </div>
 
-      {/* animations */}
+      {/* wiggle animation */}
       <style jsx>{`
         @keyframes wiggle {
           0% {
@@ -102,21 +124,19 @@ export default function DeleteUniversityModal({
             transform: translateX(6px);
           }
           45% {
-            transform: translateX(-6px);
+            transform: translateX(-4px);
           }
           60% {
-            transform: translateX(6px);
+            transform: translateX(4px);
           }
           75% {
-            transform: translateX(-3px);
-          }
-          90% {
-            transform: translateX(3px);
+            transform: translateX(-2px);
           }
           100% {
             transform: translateX(0);
           }
         }
+
         .animate-wiggle {
           animation: wiggle 0.4s ease-in-out;
         }

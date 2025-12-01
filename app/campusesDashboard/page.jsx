@@ -102,14 +102,14 @@ export default function campusesDashboard() {
           {showButtons && (
             <div className="flex flex-col sm:flex-row justify-center gap-20 mb-8 animate-sequential">
               <button
-                onClick={() => router.push("/students")}
+                onClick={() => router.push("/campusesDashboard/students")}
                 className="bg-purple-500 hover:bg-purple-600 hover:cursor-pointer text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition"
               >
                 Students
               </button>
 
               <button
-                onClick={() => router.push("/scan")}
+                onClick={() => router.push("/campusesDashboard/scan")}
                 className="bg-green-500 hover:bg-green-600 hover:cursor-pointer text-white font-semibold py-3 px-8 rounded-lg shadow-lg transition"
               >
                 Scan

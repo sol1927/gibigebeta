@@ -11,6 +11,8 @@ export default function EditProfilePage() {
   const newPwdRef = useRef(null);
   const [dragActive, setDragActive] = useState(false);
 
+  const ADMIN_CURRENT_PASSWORD = "1234";
+
   const [formData, setFormData] = useState({
     university: "Arba Minch University",
     email: "solomon@example.com",
@@ -20,6 +22,7 @@ export default function EditProfilePage() {
     logo: "/logo.png",
   });
 
+  const [errors, setErrors] = useState({});
   const [previewLogo, setPreviewLogo] = useState(formData.logo);
   const [showPassword, setShowPassword] = useState({
     current: false,
@@ -37,10 +40,10 @@ export default function EditProfilePage() {
 
   const handleChange = (e) => {
     const { name, value, files } = e.target;
+
     if (files && files[0] && name === "logo") {
       const file = files[0];
-      const objectUrl = URL.createObjectURL(file);
-      setPreviewLogo(objectUrl);
+      setPreviewLogo(URL.createObjectURL(file));
       setFormData((prev) => ({ ...prev, logo: file }));
     } else {
       setFormData((prev) => ({ ...prev, [name]: value }));
@@ -57,15 +60,7 @@ export default function EditProfilePage() {
     }
   };
 
-  const pwd = formData.newPassword;
-  const allGreen =
-    /[A-Z]/.test(pwd) &&
-    /[a-z]/.test(pwd) &&
-    /\d/.test(pwd) &&
-    /[!@#$%^&*]/.test(pwd) &&
-    pwd.length >= 8;
-
-  const showDropdown = isFocused && !allGreen;
+  const showDropdown = isFocused && formData.newPassword.length > 0;
 
   useEffect(() => {
     const handleClickOutside = (e) => {
@@ -78,19 +73,47 @@ export default function EditProfilePage() {
   }, []);
 
   const handleSave = () => {
-    if (formData.newPassword !== formData.confirmPassword) {
-      alert("New passwords do not match!");
+    const newErrors = {};
+
+    // University and email validation
+    if (!formData.university.trim())
+      newErrors.university = "University is required";
+
+    if (!formData.email.trim()) {
+      newErrors.email = "Email is required";
+    } else {
+      const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+      if (!emailRegex.test(formData.email)) {
+        newErrors.email = "Invalid email address";
+      }
+    }
+
+    // Current password validation (mandatory and must match)
+    if (!formData.currentPassword) {
+      newErrors.currentPassword = "Current password is required";
+    } else if (formData.currentPassword !== ADMIN_CURRENT_PASSWORD) {
+      newErrors.currentPassword = "Incorrect current password";
+    }
+
+    // New password validation (mandatory)
+    if (!formData.newPassword) {
+      newErrors.newPassword = "New password is required";
+    }
+
+    // Confirm password validation
+    if (!formData.confirmPassword) {
+      newErrors.confirmPassword = "Please confirm new password";
+    } else if (formData.newPassword !== formData.confirmPassword) {
+      newErrors.confirmPassword = "Passwords do not match";
+    }
+
+    setErrors(newErrors);
+
+    if (Object.keys(newErrors).length > 0) {
+      setTimeout(() => setErrors({}), 2000);
       return;
     }
 
-    if (formData.newPassword && !allGreen) {
-      alert(
-        "New password must have 8+ characters, uppercase, lowercase, number, and special character!"
-      );
-      return;
-    }
-
-    alert("Profile saved! (Frontend only, no backend)");
     router.push("/adminDashboard/profile");
   };
 
@@ -178,8 +201,13 @@ export default function EditProfilePage() {
               name="university"
               value={formData.university}
               onChange={handleChange}
-              className="bg-gray-700 text-white px-3 py-2 rounded w-full"
+              className={`bg-gray-700 text-white px-3 py-2 rounded w-full ${
+                errors.university ? "border-2 border-red-500" : ""
+              }`}
             />
+            {errors.university && (
+              <p className="text-red-500 text-sm mt-1">{errors.university}</p>
+            )}
           </div>
 
           {/* Email */}
@@ -190,8 +218,13 @@ export default function EditProfilePage() {
               name="email"
               value={formData.email}
               onChange={handleChange}
-              className="bg-gray-700 text-white px-3 py-2 rounded w-full"
+              className={`bg-gray-700 text-white px-3 py-2 rounded w-full ${
+                errors.email ? "border-2 border-red-500" : ""
+              }`}
             />
+            {errors.email && (
+              <p className="text-red-500 text-sm mt-1">{errors.email}</p>
+            )}
           </div>
 
           {/* Current Password */}
@@ -202,7 +235,9 @@ export default function EditProfilePage() {
               name="currentPassword"
               value={formData.currentPassword}
               onChange={handleChange}
-              className="bg-gray-700 text-white px-3 py-2 rounded w-full"
+              className={`bg-gray-700 text-white px-3 py-2 rounded w-full ${
+                errors.currentPassword ? "border-2 border-red-500" : ""
+              }`}
             />
             <button
               type="button"
@@ -213,6 +248,11 @@ export default function EditProfilePage() {
             >
               {showPassword.current ? "Hide" : "Show"}
             </button>
+            {errors.currentPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.currentPassword}
+              </p>
+            )}
           </div>
 
           {/* New Password */}
@@ -235,6 +275,8 @@ export default function EditProfilePage() {
             >
               {showPassword.new ? "Hide" : "Show"}
             </button>
+
+            {/* Suggestion dropdown */}
             {showDropdown && (
               <div className="absolute left-0 mt-1 w-max max-w-xs bg-gray-200 border rounded-md shadow-lg p-2 text-xs space-y-1 z-30">
                 <p
@@ -245,7 +287,7 @@ export default function EditProfilePage() {
                   }
                 >
                   {/[A-Z]/.test(formData.newPassword) ? "✅" : "❌"} At least
-                  one uppercase letter
+                  one uppercase
                 </p>
                 <p
                   className={
@@ -255,7 +297,7 @@ export default function EditProfilePage() {
                   }
                 >
                   {/[a-z]/.test(formData.newPassword) ? "✅" : "❌"} At least
-                  one lowercase letter
+                  one lowercase
                 </p>
                 <p
                   className={
@@ -275,7 +317,7 @@ export default function EditProfilePage() {
                   }
                 >
                   {/[!@#$%^&*]/.test(formData.newPassword) ? "✅" : "❌"} At
-                  least one special character
+                  least one special char
                 </p>
                 <p
                   className={
@@ -284,7 +326,7 @@ export default function EditProfilePage() {
                       : "text-red-500"
                   }
                 >
-                  {formData.newPassword.length >= 8 ? "✅" : "❌"} At least 8
+                  {formData.newPassword.length >= 8 ? "✅" : "❌"} Minimum 8
                   characters
                 </p>
               </div>
@@ -299,7 +341,9 @@ export default function EditProfilePage() {
               name="confirmPassword"
               value={formData.confirmPassword}
               onChange={handleChange}
-              className="bg-gray-700 text-white px-3 py-2 rounded w-full"
+              className={`bg-gray-700 text-white px-3 py-2 rounded w-full ${
+                errors.confirmPassword ? "border-2 border-red-500" : ""
+              }`}
             />
             <button
               type="button"
@@ -310,6 +354,11 @@ export default function EditProfilePage() {
             >
               {showPassword.confirm ? "Hide" : "Show"}
             </button>
+            {errors.confirmPassword && (
+              <p className="text-red-500 text-sm mt-1">
+                {errors.confirmPassword}
+              </p>
+            )}
           </div>
 
           {/* Buttons */}

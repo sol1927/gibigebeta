@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from "react";
 import { useRouter } from "next/navigation";
-import Navbar from "../../components/Navbar";
-import Footer from "../../components/Footer";
+import Navbar from "../../../components/Navbar";
+import Footer from "../../../components/Footer";
 import Image from "next/image";
 
 export default function AddCampusPage() {
@@ -35,7 +35,7 @@ export default function AddCampusPage() {
     setSuccessMessage(true);
     setTimeout(() => {
       setSuccessMessage(false);
-      router.push("/campuses"); // go back to campuses page
+      router.push("/adminDashboard/campuses"); // go back to campuses page
     }, 3000);
   };
 
@@ -51,12 +51,23 @@ export default function AddCampusPage() {
 
       <button
         type="button"
-        onClick={() => router.push("/campuses")}
+        onClick={() => router.push("/adminDashboard/campuses")}
         title="Back to Campuses"
         className="fixed top-[90px] left-6 p-2 rounded-full hover:bg-blue-700 z-50"
       >
-        <svg xmlns="http://www.w3.org/2000/svg" className="h-6 w-6 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth={2}>
-          <path strokeLinecap="round" strokeLinejoin="round" d="M15 19l-7-7 7-7" />
+        <svg
+          xmlns="http://www.w3.org/2000/svg"
+          className="h-6 w-6 text-white"
+          fill="none"
+          viewBox="0 0 24 24"
+          stroke="currentColor"
+          strokeWidth={2}
+        >
+          <path
+            strokeLinecap="round"
+            strokeLinejoin="round"
+            d="M15 19l-7-7 7-7"
+          />
         </svg>
       </button>
 
@@ -70,20 +81,62 @@ export default function AddCampusPage() {
           </div>
         )}
 
-        <form className="w-full bg-white/10 p-8 rounded-xl shadow-lg flex flex-col gap-6" onSubmit={handleSave}>
+        <form
+          className="w-full bg-white/10 p-8 rounded-xl shadow-lg flex flex-col gap-6"
+          onSubmit={handleSave}
+        >
           {/* Logo Upload */}
+          {/* // Inside your form, replace the logo upload div with this: */}
           <div className="flex flex-col items-start gap-2">
             <label className="font-semibold">Logo</label>
             <div
-              className="w-24 h-24 rounded-full overflow-hidden border-2 border-dashed relative cursor-pointer"
+              id="dropZone"
+              className={`w-24 h-24 rounded-full overflow-hidden border-2 border-dashed relative cursor-pointer flex items-center justify-center
+      ${previewLogo ? "" : "bg-gray-800 hover:bg-gray-700"}`}
               onClick={() => document.getElementById("logoInput").click()}
+              onDragOver={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.classList.add("border-blue-400");
+              }}
+              onDragLeave={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.classList.remove("border-blue-400");
+              }}
+              onDrop={(e) => {
+                e.preventDefault();
+                e.stopPropagation();
+                e.currentTarget.classList.remove("border-blue-400");
+
+                if (e.dataTransfer.files && e.dataTransfer.files[0]) {
+                  const file = e.dataTransfer.files[0];
+                  setPreviewLogo(URL.createObjectURL(file));
+                  setFormData({ ...formData, logo: file });
+                }
+              }}
             >
-              {previewLogo && <Image src={previewLogo} fill className="object-cover" alt="Campus Logo" />}
-              {!previewLogo && <span className="text-gray-400 text-xs text-center px-2">Click to upload</span>}
-              <input type="file" id="logoInput" accept="image/*" className="hidden" onChange={handleChange} />
+              {previewLogo ? (
+                <Image
+                  src={previewLogo}
+                  fill
+                  className="object-cover"
+                  alt="Campus Logo"
+                />
+              ) : (
+                <span className="text-gray-400 text-xs text-center px-2">
+                  Click or drag & drop
+                </span>
+              )}
+              <input
+                type="file"
+                id="logoInput"
+                accept="image/*"
+                className="hidden"
+                onChange={handleChange}
+              />
             </div>
           </div>
-
           <input
             type="text"
             name="name"
@@ -111,12 +164,18 @@ export default function AddCampusPage() {
             placeholder="Number of Students"
             required
           />
-
           <div className="flex gap-4 mt-4">
-            <button type="submit" className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-semibold">
+            <button
+              type="submit"
+              className="bg-green-500 hover:bg-green-600 text-white py-2 px-4 rounded-lg font-semibold"
+            >
               Save
             </button>
-            <button type="button" onClick={() => router.push("/campuses")} className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold">
+            <button
+              type="button"
+              onClick={() => router.push("/adminDashboard/campuses")}
+              className="bg-red-500 hover:bg-red-600 text-white py-2 px-4 rounded-lg font-semibold"
+            >
               Cancel
             </button>
           </div>
@@ -124,16 +183,32 @@ export default function AddCampusPage() {
       </div>
 
       {/* Footer */}
-      <div className={`fixed bottom-4 left-0 w-full transition-transform duration-300 ${showFooter ? "translate-y-0" : "translate-y-full"}`}>
+      <div
+        className={`fixed bottom-4 left-0 w-full transition-transform duration-300 ${
+          showFooter ? "translate-y-0" : "translate-y-full"
+        }`}
+      >
         <Footer />
       </div>
 
       <style jsx>{`
         @keyframes fadeInOut {
-          0% { opacity: 0; transform: translateY(-10px); }
-          10% { opacity: 1; transform: translateY(0); }
-          90% { opacity: 1; transform: translateY(0); }
-          100% { opacity: 0; transform: translateY(-10px); }
+          0% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
+          10% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          90% {
+            opacity: 1;
+            transform: translateY(0);
+          }
+          100% {
+            opacity: 0;
+            transform: translateY(-10px);
+          }
         }
         .animate-fadeInOut {
           animation: fadeInOut 3s ease-in-out forwards;

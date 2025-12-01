@@ -5,6 +5,7 @@ import { useParams, useRouter } from "next/navigation";
 import Navbar from "../../../components/Navbar";
 import Footer from "../../../components/Footer";
 import Image from "next/image";
+import ActionConfirmationModal from "@/app/components/ActionConfirmationModal";
 
 export default function CampusDetailsPage() {
   const router = useRouter();
@@ -41,6 +42,7 @@ export default function CampusDetailsPage() {
 
   const campus = allCampuses.find((c) => c.id === campusId);
   const [showFooter, setShowFooter] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
 
   useEffect(() => {
     const handleScroll = () => setShowFooter(window.scrollY > 50);
@@ -50,6 +52,12 @@ export default function CampusDetailsPage() {
 
   if (!campus)
     return <p className="text-center mt-20 text-white">Campus not found.</p>;
+
+  // Handle edit action after password confirmation
+  const handleConfirmEdit = () => {
+    router.push(`/adminDashboard/campuses/edit/${campus.id}`);
+    setShowActionModal(false);
+  };
 
   return (
     <div className="min-h-screen bg-black/50 text-white flex flex-col relative">
@@ -102,15 +110,26 @@ export default function CampusDetailsPage() {
             </p>
           </div>
         </div>
+        {/* Edit Campus button triggers action modal */}
         <button
           type="button"
-          onClick={() => router.push(`/adminDashboard/campuses/edit/${campus.id}`)}
+          onClick={() => setShowActionModal(true)}
           className="mt-6 bg-green-500 hover:bg-green-600 py-3 px-8 rounded-lg font-semibold text-xl"
         >
           Edit Campus
         </button>
         <div className="h-40" /> {/* Extra spacing for footer */}
       </div>
+
+      {/* Action Confirmation Modal */}
+      <ActionConfirmationModal
+        show={showActionModal}
+        adminPassword="1234" // Replace with real admin password
+        itemName="Campus"
+        actionType="edit"
+        onConfirm={handleConfirmEdit}
+        onCancel={() => setShowActionModal(false)}
+      />
 
       {/* Footer */}
       <div

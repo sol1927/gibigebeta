@@ -6,6 +6,7 @@ import Footer from "../../components/Footer";
 import { useRouter } from "next/navigation";
 import DeleteModal from "../../components/DeleteModal";
 import Image from "next/image";
+import ActionConfirmationModal from "@/app/components/ActionConfirmationModal";
 
 export default function CampusesPage({ userType }) {
   const router = useRouter();
@@ -43,6 +44,9 @@ export default function CampusesPage({ userType }) {
   const [deleteCampusId, setDeleteCampusId] = useState(null);
   const dropdownRefs = useRef({});
   const [showFooter, setShowFooter] = useState(false);
+  const [showActionModal, setShowActionModal] = useState(false);
+  const [actionType, setActionType] = useState(""); // "delete" or "edit"
+  const [targetCampusId, setTargetCampusId] = useState(null);
 
   const sortedCampuses = [...campuses]
     .filter((c) => c.name.toLowerCase().includes(searchTerm.toLowerCase()))
@@ -67,9 +71,17 @@ export default function CampusesPage({ userType }) {
     return () => document.removeEventListener("mousedown", handleClickOutside);
   }, []);
 
+  const handleAddCampus = () => {
+    setActionType("add"); // set action type
+    setTargetCampusId(null); // no target for add
+    setShowActionModal(true); // show password modal
+  };
+
   const handleDelete = (id) => {
-    setSelectedMenu(null); // instantly close the dropdown
-    setDeleteCampusId(id); // show delete confirmation box
+    setSelectedMenu(null);
+    setActionType("delete");
+    setTargetCampusId(id);
+    setShowActionModal(true);
   };
 
   const confirmDelete = () => {
@@ -77,9 +89,28 @@ export default function CampusesPage({ userType }) {
     setDeleteCampusId(null);
   };
 
-  const handleEdit = (id) => router.push(`/adminDashboard/campuses/edit/${id}`);
-  const handleViewDetails = (id) => router.push(`/adminDashboard/campuses/${id}`);
-  const handleAddCampus = () => router.push("/campuses/add");
+  const handleEdit = (id) => {
+    setSelectedMenu(null);
+    setActionType("edit");
+    setTargetCampusId(id);
+    setShowActionModal(true);
+  };
+
+  const handleConfirmAction = () => {
+    if (actionType === "edit") {
+      router.push(`/adminDashboard/campuses/edit/${targetCampusId}`);
+    } else if (actionType === "delete") {
+      setDeleteCampusId(targetCampusId);
+    } else if (actionType === "add") {
+      router.push("/adminDashboard/campuses/add"); // navigate to add campus page
+    }
+
+    // Close the password modal
+    setShowActionModal(false);
+  };
+
+  const handleViewDetails = (id) =>
+    router.push(`/adminDashboard/campuses/${id}`);
 
   return (
     <div className="min-h-screen bg-black/50 text-white flex flex-col relative">
@@ -231,11 +262,25 @@ export default function CampusesPage({ userType }) {
         <div className="h-[20vh]" />
       </div>
 
+      <ActionConfirmationModal
+        show={showActionModal}
+        adminPassword="1234" // Replace with real admin password
+        itemName="Campus"
+        actionType={actionType} // "delete" or "edit"
+        onConfirm={handleConfirmAction}
+        onCancel={() => setShowActionModal(false)}
+      />
+
       <DeleteModal
         visible={deleteCampusId !== null}
         studentName={campuses.find((c) => c.id === deleteCampusId)?.name}
         onCancel={() => setDeleteCampusId(null)}
-        onConfirm={confirmDelete}
+        onConfirm={() => {
+          setCampuses((prev) => prev.filter((c) => c.id !== deleteCampusId));
+          setDeleteCampusId(null);
+          setTargetCampusId(null); // reset targetCampusId
+          setActionType("");
+        }}
       />
 
       <div

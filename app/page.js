@@ -157,11 +157,10 @@ export default function UniversitySelectionPage() {
           setShowPasswordModal={setShowPasswordModal}
         />
         <h1 className="text-4xl font-extrabold text-center text-transparent bg-clip-text bg-gradient-to-r from-blue-500 to-purple-900 animate-fadeIn">
-          Welcome to Gibigebeta
+          Welcome
         </h1>
         <p className="text-center text-gray-700 max-w-xl text-lg animate-fadeIn delay-200">
-          Gibigebeta is a modern student cafeteria system that helps
-          universities manage meal tracking efficiently across campuses.
+          asdfghjkl
         </p>
       </div>
 
